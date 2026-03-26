@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const nodemailer = require("nodemailer");
 const generatePDF = require("../utils/generatePDF");
-const BlockedDate = require("../models/BlockedDate");
+const Event = require("../models/Event.js");
+const { syncToGoogleCalendar } = require("../services/googleCalendarService.js");
 
 // ================= TRANSPORTER =================
 const transporter = nodemailer.createTransport({
@@ -25,12 +26,26 @@ router.post("/approve-with-pdf", async (req, res) => {
 
     console.log("📦 Booking:", booking);
 
-    // ✅ SAVE BLOCKED DATE
-    const exists = await BlockedDate.findOne({ date: booking.eventDate });
+    // ✅ SAVE SECURE CALENDAR EVENT & GOOGLE SYNC
+    const exists = await Event.findOne({ date: booking.eventDate });
 
     if (!exists) {
-      await new BlockedDate({ date: booking.eventDate }).save();
-      console.log("📅 Date saved");
+      const newEvent = new Event({
+        title: `LED Booking - ${booking.name}`,
+        location: booking.location || "Setup Required",
+        description: `Approved LED Booking. Contact: ${booking.email} | Service: ${booking.serviceType}`,
+        date: booking.eventDate
+      });
+      
+      try {
+        const googleEventId = await syncToGoogleCalendar(newEvent);
+        if (googleEventId) newEvent.googleEventId = googleEventId;
+      } catch(err) {
+        console.log("Google Sync skipped during approval.");
+      }
+      
+      await newEvent.save();
+      console.log("📅 Official Calendar Event + Google Sync Generated!");
     }
 
     // ✅ GENERATE PDF
