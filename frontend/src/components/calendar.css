@@ -1,0 +1,19 @@
+/* 🔴 blocked */
+.booked-date {
+  background: #ef4444 !important;
+  color: white !important;
+  border-radius: 50%;
+}
+
+/* 🟢 free */
+.free-date {
+  background: #22c55e !important;
+  color: white !important;
+  border-radius: 50%;
+}
+
+/* today */
+.react-calendar__tile--now {
+  background: gold !important;
+  border-radius: 50%;
+}
