@@ -10,17 +10,19 @@ const initCalendar = () => {
   try {
     const keyPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || path.join(__dirname, '../../config/google-calendar-service-account.json');
     
-    // Check if the user has actually placed the JSON key file
-    if (!fs.existsSync(keyPath)) {
+    let authOptions = { scopes: SCOPES };
+    if (process.env.GOOGLE_CREDENTIALS_JSON) {
+      // 1. Used strictly when hosted live on Render via secure Environment Variables
+      authOptions.credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS_JSON);
+    } else if (fs.existsSync(keyPath)) {
+      // 2. Used strictly during Local Development
+      authOptions.keyFile = keyPath;
+    } else {
       console.log('⚠️ Google Calendar JSON key not found. Running in MOCK mode.');
       return false;
     }
 
-    const auth = new google.auth.GoogleAuth({
-      keyFile: keyPath,
-      scopes: SCOPES,
-    });
-
+    const auth = new google.auth.GoogleAuth(authOptions);
     calendar = google.calendar({ version: 'v3', auth: auth });
     return true;
   } catch (err) {
