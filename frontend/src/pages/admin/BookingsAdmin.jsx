@@ -97,6 +97,14 @@ const approve = async (id) => {
             <p><b>Place:</b> {b.place}</p>
             <p><b>Event Type:</b> {b.eventType}</p>
             <p><b>Date:</b> {b.eventDate}</p>
+            
+            {b.ledSize && (
+              <div className="bg-gray-100 p-3 rounded mt-2 border border-gray-200">
+                <p><b>LED Size:</b> {b.ledSize} Feet</p>
+                <p><b>Quantity:</b> {b.quantity} Screen(s)</p>
+                <p className="text-green-700"><b>System Quote:</b> ₹{b.totalCost?.toLocaleString()}</p>
+              </div>
+            )}
 
             <p>
               <b>Status:</b>

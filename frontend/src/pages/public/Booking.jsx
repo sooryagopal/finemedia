@@ -13,8 +13,18 @@ const Booking = () => {
     eventType: "",
     eventDate: location.state?.selectedDate
       ? new Date(location.state.selectedDate).toISOString().split("T")[0]
-      : ""
+      : "",
+    ledSize: "",
+    quantity: 1
   });
+
+  const sizes = {
+    "12x8": 96,
+    "8x6": 48,
+    "6x6": 36
+  };
+  const sqft = sizes[form.ledSize] || 0;
+  const estimatedCost = sqft * 150 * (parseInt(form.quantity) || 1);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -44,6 +54,9 @@ const Booking = () => {
       landmark: form.landmark,
       eventType: form.eventType,
       eventDate: form.eventDate,
+      ledSize: form.ledSize,
+      quantity: form.quantity,
+      totalCost: estimatedCost,
       status: "Pending"
     };
 
@@ -60,7 +73,9 @@ const Booking = () => {
       place: "",
       landmark: "",
       eventType: "",
-      eventDate: ""
+      eventDate: "",
+      ledSize: "",
+      quantity: 1
     });
   };
 
@@ -149,6 +164,41 @@ const Booking = () => {
           required
           className="w-full border p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+
+        {/* LED SIZE */}
+        <select
+          name="ledSize"
+          value={form.ledSize}
+          onChange={handleChange}
+          required
+          className="w-full border p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Select LED Size (Feet)</option>
+          <option value="12x8">12 x 8 (96 sqft)</option>
+          <option value="8x6">8 x 6 (48 sqft)</option>
+          <option value="6x6">6 x 6 (36 sqft)</option>
+        </select>
+
+        {/* QUANTITY */}
+        <input
+          type="number"
+          name="quantity"
+          placeholder="Quantity of Screens (e.g. 1)"
+          value={form.quantity}
+          onChange={handleChange}
+          min="1"
+          required
+          className="w-full border p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        {/* ESTIMATED COST BOX */}
+        {estimatedCost > 0 && (
+          <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-xl text-center shadow-inner">
+            <p className="text-sm font-semibold uppercase tracking-wider mb-1">Estimated Rental Cost</p>
+            <p className="text-3xl font-black">₹{estimatedCost.toLocaleString()}</p>
+            <p className="text-xs text-green-600 mt-1">Based on ₹150/sqft x {form.quantity} Screen(s)</p>
+          </div>
+        )}
 
         {/* SUBMIT */}
         <button className="bg-blue-600 text-white w-full py-3 rounded">
