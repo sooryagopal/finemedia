@@ -107,6 +107,9 @@ app.use("/api/stock", loadRoute("./src/routes/stockRoutes", "stock"));
 
 const analyticsRoutes = require("./src/routes/analyticsRoutes");
 app.use("/api/analytics", analyticsRoutes);
+
+const eventRoutes = require("./src/routes/eventRoutes");
+app.use("/api/events", eventRoutes);
 // ======================
 // MongoDB Connection
 // ======================
@@ -126,7 +129,6 @@ const connectDB = async () => {
 };
 
 connectDB();
-
 
 // ======================
 // Start Server

@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ReactLenis } from "@studio-freight/react-lenis";
 
 // Public Pages
 import Home from "./pages/public/Home";

@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const Booking = require("../models/Booking.jsx");
 
 // 🔥 ANALYTICS API
 router.get("/", async (req, res) => {

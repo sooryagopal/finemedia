@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
@@ -7,6 +8,7 @@ import {
   FiBookOpen,
   FiSettings,
 } from "react-icons/fi";
+import axios from "axios";
 
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -17,31 +19,45 @@ const Dashboard = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
+  const [monthly, setMonthly] = useState([]);
+  const [revenue, setRevenue] = useState([]);
+  const [events, setEvents] = useState([]);
+  
+  const [totalBookings, setTotalBookings] = useState(0);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get("http://localhost:5000/api/analytics", {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        setMonthly(res.data.monthly || []);
+        setRevenue(res.data.revenue || []);
+        setEvents(res.data.events || []);
+
+        const tBookings = (res.data.monthly || []).reduce((acc, curr) => acc + curr.bookings, 0);
+        const tRev = (res.data.revenue || []).reduce((acc, curr) => acc + curr.revenue, 0);
+        
+        setTotalBookings(tBookings);
+        setTotalRevenue(tRev);
+
+      } catch(err) {
+        console.error("Failed to fetch analytics", err);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
+
   const handleLogout = () => {
     logout();
     navigate("/admin/login");
   };
 
-  // 🔥 MOCK DATA
-  const monthly = [
-    { month: "Jan", bookings: 5 },
-    { month: "Feb", bookings: 8 },
-    { month: "Mar", bookings: 12 },
-  ];
-
-  const revenue = [
-    { month: "Jan", revenue: 20000 },
-    { month: "Feb", revenue: 40000 },
-    { month: "Mar", revenue: 60000 },
-  ];
-
-  const events = [
-    { name: "Wedding", value: 10 },
-    { name: "Corporate", value: 5 },
-    { name: "Birthday", value: 7 },
-  ];
-
-  const COLORS = ["#3b82f6", "#10b981", "#f59e0b"];
+  const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#6366f1", "#ef4444"];
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -169,9 +185,9 @@ const Dashboard = () => {
             {/* QUICK STATS */}
             <div className="bg-white p-5 rounded-xl shadow flex flex-col justify-center">
               <h3 className="font-semibold mb-3">Quick Stats</h3>
-              <p>Total Bookings: <b>25</b></p>
-              <p>Total Revenue: <b>₹1,20,000</b></p>
-              <p>Active Events: <b>12</b></p>
+              <p>Total Bookings: <b>{totalBookings}</b></p>
+              <p>Total Revenue: <b>₹{totalRevenue.toLocaleString()}</b></p>
+              <p>Active Events: <b>{events.reduce((acc, curr)=> acc + curr.value, 0)}</b></p>
             </div>
 
           </div>

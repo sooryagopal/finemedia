@@ -82,7 +82,7 @@ const GalleryAdmin = () => {
 
             {/* 🔥 IMPORTANT CHANGE */}
             <img
-              src={img.url}
+              src={img.image}
               alt="gallery"
               className="rounded-lg shadow h-48 w-full object-cover"
             />

@@ -55,17 +55,17 @@ const Contact = () => {
     {
       icon: <FiMapPin />,
       title: "Our Location",
-      details: ["Chennai", "Coimbatore", "Madurai"]
+      details: ["Erode", "Coimbatore", "Chennai","All over Tamilnadu"]
     },
     {
       icon: <FiPhone />,
       title: "Phone",
-      details: ["+91 9876543210", "+91 8765432109"]
+      details: ["+91 9842734466", "+91 9842773866"]
     },
     {
       icon: <FiMail />,
       title: "Email",
-      details: ["info@finemedia.com"]
+      details: ["finemediaerode@gmail.com"]
     },
     {
       icon: <FiClock />,
