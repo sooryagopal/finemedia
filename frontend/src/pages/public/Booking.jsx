@@ -139,13 +139,15 @@ const Booking = () => {
           <option value="College Event">College Event</option>
         </select>
 
-        {/* DATE (AUTO FILLED) */}
+        {/* DATE PICKER */}
         <input
           type="date"
           name="eventDate"
           value={form.eventDate}
-          readOnly
-          className="w-full border p-3 rounded bg-gray-100"
+          onChange={handleChange}
+          min={new Date().toISOString().split("T")[0]}
+          required
+          className="w-full border p-3 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         {/* SUBMIT */}
