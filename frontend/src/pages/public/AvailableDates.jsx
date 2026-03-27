@@ -23,7 +23,7 @@ const AvailableDates = () => {
   // 🔥 FETCH BLOCKED DATES FROM BACKEND
   const fetchBlockedDates = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/blocked-dates");
+      const res = await fetch("https://finemedia-api.onrender.com/api/blocked-dates");
       const data = await res.json();
 
       // convert [{date: "..."}] → ["..."]

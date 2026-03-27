@@ -26,7 +26,7 @@ const approve = async (id) => {
 
   try {
     // 🔥 CALL BACKEND (handles EVERYTHING)
-    await fetch("http://localhost:5000/api/bookings/approve-with-pdf", {
+    await fetch("https://finemedia-api.onrender.com/api/bookings/approve-with-pdf", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -54,7 +54,7 @@ const approve = async (id) => {
     localStorage.setItem("bookings", JSON.stringify(updated));
 
     try {
-      await fetch("http://localhost:5000/api/mail/send-status-mail", {
+      await fetch("https://finemedia-api.onrender.com/api/mail/send-status-mail", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

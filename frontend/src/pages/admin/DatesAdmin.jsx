@@ -23,7 +23,7 @@ const DatesAdmin = () => {
   // Load events
   const fetchEvents = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/events", getAuthHeaders());
+      const res = await axios.get("https://finemedia-api.onrender.com/api/events", getAuthHeaders());
       const formatted = res.data.map(e => ({
         id: e._id,
         title: e.title,
@@ -61,7 +61,7 @@ const DatesAdmin = () => {
     
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/events", {
+      await axios.post("https://finemedia-api.onrender.com/api/events", {
         ...newEvent,
         date: selectedDate
       }, getAuthHeaders());
@@ -88,7 +88,7 @@ const DatesAdmin = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://localhost:5000/api/events/${id}`, getAuthHeaders());
+      await axios.delete(`https://finemedia-api.onrender.com/api/events/${id}`, getAuthHeaders());
       fetchEvents();
       setDayEvents(dayEvents.filter(e => e.id !== id));
     } catch (err) {
