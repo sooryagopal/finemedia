@@ -28,6 +28,9 @@ const DatesAdmin = () => {
         id: e._id,
         title: e.title,
         date: new Date(e.date).toISOString().split("T")[0],
+        backgroundColor: "#ef4444",
+        borderColor: "#b91c1c",
+        textColor: "white",
         extendedProps: {
           description: e.description,
           location: e.location
@@ -93,6 +96,18 @@ const DatesAdmin = () => {
     }
   }
 
+  // Custom Event Render for Calendar Cells
+  const renderEventContent = (eventInfo) => {
+    return (
+      <div className="w-full text-xs p-1">
+        <div className="font-bold truncate">{eventInfo.event.title}</div>
+        {eventInfo.event.extendedProps?.location && (
+          <div className="truncate opacity-90 mt-0.5 text-[10px] leading-tight flex items-center gap-1">📍 {eventInfo.event.extendedProps.location}</div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="p-8 max-w-6xl mx-auto bg-gray-50 min-h-screen">
       <div className="mb-8">
@@ -113,7 +128,8 @@ const DatesAdmin = () => {
             center: "title",
             right: "dayGridMonth"
           }}
-          eventClassNames="cursor-pointer font-medium"
+          eventContent={renderEventContent}
+          eventClassNames="cursor-pointer shadow-sm rounded-md border"
         />
       </div>
 
