@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://finemedia-api.onrender.com"
+  baseURL: window.location.hostname === "localhost" ? "http://localhost:5000" : "https://finemedia-api.onrender.com"
 });
 
 

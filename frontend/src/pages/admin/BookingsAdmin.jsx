@@ -25,8 +25,12 @@ const approve = async (id) => {
   localStorage.setItem("bookings", JSON.stringify(updated));
 
   try {
-    // 🔥 CALL BACKEND (handles EVERYTHING)
-    await fetch("https://finemedia-api.onrender.com/api/bookings/approve-with-pdf", {
+    // 🔥 CALL BACKEND DYNAMICALLY
+    const backendUrl = window.location.hostname === "localhost" 
+      ? "http://localhost:5000" 
+      : "https://finemedia-api.onrender.com";
+
+    await fetch(`${backendUrl}/api/bookings/approve-with-pdf`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -54,7 +58,11 @@ const approve = async (id) => {
     localStorage.setItem("bookings", JSON.stringify(updated));
 
     try {
-      await fetch("https://finemedia-api.onrender.com/api/mail/send-status-mail", {
+      const backendUrl = window.location.hostname === "localhost" 
+        ? "http://localhost:5000" 
+        : "https://finemedia-api.onrender.com";
+        
+      await fetch(`${backendUrl}/api/mail/send-status-mail`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
