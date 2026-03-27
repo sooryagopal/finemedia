@@ -6,7 +6,8 @@ const Admin = require("../models/Admin.jsx"); // .jsx as per current repo
 // Admin Login
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    email = email ? email.toLowerCase().trim() : "";
 
     // Optional: Seed the first admin if none exists
     const adminCount = await Admin.countDocuments();
