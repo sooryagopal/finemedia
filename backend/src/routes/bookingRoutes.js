@@ -1,18 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const nodemailer = require("nodemailer");
+const fs = require("fs");
 const generatePDF = require("../utils/generatePDF");
 const Event = require("../models/Event.js");
 const { syncToGoogleCalendar } = require("../services/googleCalendarService.js");
 
-// ================= TRANSPORTER =================
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+
 
 
 // ================= 🔥 APPROVE + PDF + MAIL =================
@@ -50,28 +43,30 @@ router.post("/approve-with-pdf", async (req, res) => {
     const pdfPath = await generatePDF(booking);
     console.log("📄 PDF created:", pdfPath);
 
-    // ✅ SEND MAIL
-    console.log("📧 Sending to:", booking.email);
+    // ✅ SEND MAIL VIA GOOGLE WEBHOOK
+    console.log("📧 Sending to (Webhook API):", booking.email);
 
-    await transporter.sendMail({
-      from: `"Fine Media" <${process.env.EMAIL_USER}>`,
+    const pdfBuffer = fs.readFileSync(pdfPath);
+    const base64Data = pdfBuffer.toString("base64");
+
+    const payload = {
       to: booking.email,
       subject: "Booking Approved + Quotation",
-      html: `
-        <h2>Booking Approved ✅</h2>
-        <p>Dear ${booking.name},</p>
-        <p>Your booking has been approved.</p>
-        <p>Quotation attached 📄</p>
-      `,
-      attachments: [
-        {
-          filename: "quotation.pdf",
-          path: pdfPath
-        }
-      ]
+      body: `<h2>Booking Approved ✅</h2><p>Dear ${booking.name},</p><p>Your booking has been confidently approved. Your official quotation is attached.</p><p>Thank you,<br>Fine Media Team</p>`,
+      filename: `Quotation-${booking._id || Date.now()}.pdf`,
+      mimeType: "application/pdf",
+      attachmentBase64: base64Data
+    };
+
+    const webhookUrl = "https://script.google.com/macros/s/AKfycbw5oNFH7zz3fE5mkC1S6mLTJdhr5wi20WdqgwfaGFVrSXHJGzl_W3rienseRxcN3TwL/exec";
+    
+    await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(payload)
     });
 
-    console.log("✅ MAIL SENT");
+    console.log("✅ HTTP WEBHOOK MAIL SENT");
 
     res.json({ success: true });
 

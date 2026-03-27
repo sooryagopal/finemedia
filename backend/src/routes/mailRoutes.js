@@ -1,16 +1,9 @@
 const express = require("express");
-const nodemailer = require("nodemailer");
+
 
 const router = express.Router();
 
-// 🔥 Gmail transporter (use same env)
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbw5oNFH7zz3fE5mkC1S6mLTJdhr5wi20WdqgwfaGFVrSXHJGzl_W3rienseRxcN3TwL/exec";
 
 
 // =======================================================
@@ -22,22 +15,17 @@ router.post("/contact", async (req, res) => {
 
   try {
 
-    const mailOptions = {
-      from: `"Fine Media Website" <${process.env.EMAIL_USER}>`,
-      to: process.env.EMAIL_USER,   // admin receives
-      replyTo: email,
+    const payload = {
+      to: process.env.EMAIL_USER,
       subject: `New Enquiry: ${subject}`,
-      html: `
-        <h2>New Contact Message</h2>
-        <p><b>Name:</b> ${name}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Phone:</b> ${phone}</p>
-        <p><b>Subject:</b> ${subject}</p>
-        <p><b>Message:</b> ${message}</p>
-      `
+      body: `<h3>New Contact Message</h3><p><b>Name:</b> ${name}</p><p><b>Email:</b> ${email}</p><p><b>Phone:</b> ${phone}</p><p><b>Subject:</b> ${subject}</p><p><b>Message:</b> ${message}</p>`
     };
 
-    await transporter.sendMail(mailOptions);
+    await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(payload)
+    });
 
     res.json({ success: true, message: "Mail sent" });
 
@@ -83,11 +71,16 @@ Fine Media Team
   }
 
   try {
-    await transporter.sendMail({
-      from: `"Fine Media" <${process.env.EMAIL_USER}>`,
-      to: email,     // user receives mail
+    const payload = {
+      to: email,     
       subject: subject,
-      text: text,
+      body: text,
+    };
+
+    await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(payload)
     });
 
     res.json({ success: true, message: "Status mail sent" });
