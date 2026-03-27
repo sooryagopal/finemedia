@@ -5,12 +5,14 @@ const path = require("path");
 const generatePDF = (booking) => {
   return new Promise((resolve, reject) => {
 
-    // 📁 File path
-    const filePath = path.join(
-      __dirname,
-      "../../uploads",
-      `quotation-${booking._id || Date.now()}.pdf`
-    );
+    // 📁 Directory and File path
+    const dirPath = path.join(__dirname, "../../uploads");
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
+      console.log("📁 Auto-created missing 'uploads' directory for PDF generation!");
+    }
+
+    const filePath = path.join(dirPath, `quotation-${booking._id || Date.now()}.pdf`);
 
     // 📄 Create PDF
     const doc = new PDFDocument({ margin: 50 });
@@ -77,7 +79,7 @@ const generatePDF = (booking) => {
     // ================= PRICE =================
     doc
       .fontSize(14)
-      .text(`Total Amount: ₹${booking.totalAmount || 5000}`, {
+      .text(`Total Amount: ₹${booking.totalCost || booking.totalAmount || 5000}`, {
         underline: true,
       });
 
